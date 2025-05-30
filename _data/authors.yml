@@ -8,25 +8,23 @@ author1:
   # Used at the bottom of each page and at the top of the `about` layout
   # Markdown enabled, can use multiple paragraphs (enabled by `|`)
   about:             |
-    열심히 가꾸는 중...
-    
-    영차영차
+    결제 도메인을 좋아하는 서버 개발자 입니다
 
   # This photo will be used in the about section
   picture:
-    path:            https://via.placeholder.com/128x128
+ #   path:            /assets/img/me.jpg
     # srcset is optional, but can be used to provide higher res versions for retina displays
-    srcset:
-      1x:            https://via.placeholder.com/128x128
-      2x:            https://via.placeholder.com/256x256
+#    srcset:
+#      1x:            /assets/img/me.jpg
+#      2x:            /assets/img/me.jpg
 
   # Social media icons in sidebar
   # Comment/uncommet to show/hide
   # Rearrange to change the order in which they appear
   # You can also provide an absolute URL (starting with https://) instead of usernames
   social:
-    twitter:         <username>
-    github:          <username>
+    # twitter:         <username>
+    github:          myeonginjin
     # email:           <mail@domain.tld>
     # rss:             https://<url>/feed.xml
     # facebook:        <username>
