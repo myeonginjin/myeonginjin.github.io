@@ -1,14 +1,14 @@
 ---
 layout: page
-title: Documentation
+title: 💻 Tech Blog
 description: >
-  Here you should be able to find everything you need to know to accomplish the most common tasks when blogging with Hydejack.
+  철저하게 분석하고 유연하게 설계하고자 노력합니다
 hide_description: true
 sitemap: false
 permalink: /docs/
 ---
 
-Here you should be able to find everything you need to know to accomplish the most common tasks when blogging with Hydejack.
+배움과 경험을 기록합니다
 
 While this manual tries to be beginner-friendly, as a user of Jekyll it is assumed that you are comfortable running shell commands and editing text files.
 {:.note}
