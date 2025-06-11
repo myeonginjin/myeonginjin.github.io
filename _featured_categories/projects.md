@@ -6,12 +6,12 @@ layout: list
 title: Projects
 
 # The name of the tag, used in a post's front matter (e.g. tags: [<slug>]).
-slug: Tech
+slug: Projects
 
 # (Optional) Write a short (~150 characters) description of this featured tag.
 description: >
-  This is a featured category, which have their own page.
-  Check out `_featured_tags/example.md` to learn how to create your own.
+  지금까지 저와 함께한 프로젝트를 기록합니다   
+  
 
 # (Optional) You can disable grouping posts by date.
 # no_groups: true

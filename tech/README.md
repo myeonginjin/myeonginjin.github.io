@@ -1,49 +1,27 @@
 ---
 layout: page
-title: 💻 Tech Blog
+title: Tech
 description: >
   철저하게 분석하고 유연하게 설계하고자 노력합니다
 hide_description: true
 sitemap: false
 permalink: /tech/
 ---
-
-배움과 경험을 기록합니다
-
-While this manual tries to be beginner-friendly, as a user of Jekyll it is assumed that you are comfortable running shell commands and editing text files.
+배움과 경험을 기록합니다   
+이론적인 내용보다는 제가 직접 경험하고 느낀 것들을 중점으로 서술되어 있습니다
 {:.note}
 
 
-## Getting started
-* [Install]{:.heading.flip-title} --- How to install and run Hydejack.
-* [Upgrade]{:.heading.flip-title} --- You can skip this if you haven't used Hydejack before.
-* [Config]{:.heading.flip-title} --- Once Jekyll is running you can start editing your config file.
+## Java
+* [자바의 다양한 문자열 null & 공백 체크 방식들]{:.heading.flip-title} --- 자바 개발자라면 두려울 NPE를 방지해보자
 {:.related-posts.faded}
 
-## Using Hydejack
-* [Basics]{:.heading.flip-title} --- How to add different types of content.
-* [Writing]{:.heading.flip-title} --- Producing markdown content for Hydejack.
-* [Scripts]{:.heading.flip-title} --- How to include 3rd party scripts on your site.
-* [Build]{:.heading.flip-title} --- How to build the static files for deployment.
-* [Deploy]{:.heading.flip-title} --- 🆕 How to deploy to a variety of popular providers.
-* [Advanced]{:.heading.flip-title} --- Guides for more advanced tasks.
+## Spring
+* [정적 메서드에서 스프링 빈을 사용할 수 있을까?]{:.heading.flip-title} --- @PostConstruct를 활용한 정적 필드 초기화
 {:.related-posts.faded}
 
-## Other
-* [LICENSE]{:.heading.flip-title} --- The license of this project.
-* [NOTICE]{:.heading.flip-title} --- Parts of this program are provided under separate licenses.
-* [CHANGELOG]{:.heading.flip-title} --- Version history of Hydejack.
+## Oracle
 {:.related-posts.faded}
 
-[install]: install.md
-[upgrade]: upgrade.md
-[config]: config.md
-[basics]: basics.md
-[writing]: writing.md
-[scripts]: scripts.md
-[build]: build.md
-[deploy]: deploy.md
-[advanced]: advanced.md
-[LICENSE]: ../LICENSE.md
-[NOTICE]: ../NOTICE.md
-[CHANGELOG]: ../CHANGELOG.md
+[자바의 다양한 문자열 null & 공백 체크 방식들]: java/null_check.md
+[정적 메서드에서 스프링 빈을 사용할 수 있을까?]: spring/postConstruct.md
