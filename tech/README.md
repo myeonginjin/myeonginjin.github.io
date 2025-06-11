@@ -5,7 +5,7 @@ description: >
   철저하게 분석하고 유연하게 설계하고자 노력합니다
 hide_description: true
 sitemap: false
-permalink: /docs/
+permalink: /tech/
 ---
 
 배움과 경험을 기록합니다

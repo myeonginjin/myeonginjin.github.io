@@ -25,20 +25,20 @@ author1:
   social:
     # twitter:         <username>
     github:          myeonginjin
-    # email:           <mail@domain.tld>
-    # rss:             https://<url>/feed.xml
+    #email:           <myeonginjin98@gmail.com>
+    #rss:             https://<url>/feed.xml
     # facebook:        <username>
     # google:          <number>
-    # vk:              <username>
-    # youtube:         <string_string_string>
-    # vimeo:           <username>
-    # vine:            <username>
+    #vk:              <username>
+    #youtube:         https://www.youtube.com/@Jinzzru
+    #vimeo:           <username>
+    #vine:            <username>
     # spotify:         <user>/<number>
     # soundcloud:      <username>
-    # lastfm:          <username>
+    #lastfm:          <username>
     # instagram:       <username>
-    # flickr:          <string@string>
-    # 500px:           <username>
+    #flickr:          <string@string>
+    #500px:           <username>
     # dribbble:        <username>
     # behance:         <username>
     # deviantart:      <username>
@@ -53,10 +53,10 @@ author1:
     # stackoverflow:   <number/username>
     # npm:             <username>
     # hackernews:      <username>
-    # trello:          <firstnamelastname>
+    #trello:          <firstnamelastname>
     # linkedin:        <firstname-lastname-string>
     # xing:            <firstname_lastname_counter>
-    # blogger:         <number>
+    #blogger:         <number>
     # delicious:       <username>
     # stumbleupon:     <username>
     # paypal:          <username>
@@ -69,12 +69,12 @@ author1:
     # stripe:          https://<url>
     # slack:           https://<url>
     # gitlab:          <username>
-    # line:            <username>
-    # medium:          <path>
+    #line:            <username>
+    #medium:          <path>
     # xbox:            <gamer-tag>
-    # wechat:          https://<url>
+    #wechat:          https://blog.naver.com/kai5588
     # discord:         <invite-code>
-    # mastodon:        https://<url>
+    #mastodon:        https://<url>
     # x:               <username>
 
 # Another author (optional)
