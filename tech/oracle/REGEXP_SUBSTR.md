@@ -15,48 +15,47 @@
 바로 이 합집합을 구하는 과정에서, 사용자 경험을 저해하는 속도가 나왔는데요.
 오늘은 이 문제의 원인과 해결 과정을 공유해보겠습니다.
 
-
+**단, 테이블 구조와 코드는 보안상 예시로 대체하겠습니다.**
 
 ## 🎯 1. 문제의 발단과 배경
 
 #### 데이터 구조
 
-* **TBSI\_MBS** 테이블
+* **가맹점 정보** 테이블
 
-    * 가맹점 한 줄당 인증사 코드를 `01:02:03` 식으로 **콜론으로 연결된 문자열**(`EZP_AUTH_CD_LST`)로 보관
+    * 가맹점 한 줄당 인증사 코드를 `01:02:03` 식으로 **콜론으로 연결된 문자열**(`간편결제_LST`)로 보관
     * 하나의 그룹 ID(`GID`)에 여러 가맹점(`MID`)이 속할 수 있음
 
-  | MID  | GID | EZP\_AUTH\_CD\_LST |
-    | :--- | :-: | :----------------- |
-  | A100 |  G1 | `01:02`            |
-  | A101 |  G1 | `02:03`            |
-  | A102 |  G1 | `01:03:04`         |
+  | MID  | GID | 간편결제_LST       |
+    | :--- | :-: |:---------------|
+  | A100 |  G1 | `01:02`        |
+  | A101 |  G1 | `02:03`        |
+  | A102 |  G1 | `01:03:04`     |
 
 #### 문제 상황
 
 1. **GID**로 조회 시, 여러 `MID`에서 가져온 결제 수단 문자열을 Java에서 `split`하고 합집합을 구한 뒤, 추가 쿼리로 이름 매핑
 2. SQL 호출 2회, Java 파싱·`HashSet` 연산, 네트워크 왕복 비용이 반복되어 대량 가맹점 처리 시 응답이 0.5초 안팎으로 느려짐
 
+**🚨 보안 상 예시 로직으로 대체합니다 🚨**
 ```java
-public List<Map<String,String>> getLegacyEzpAuthListByGid(String gid) {
+public List<Map<String,String>> get간편결제ListByGid_Legacy(String gid) {
     // (1) GID로 문자열 리스트 조회 → 1쿼리
-    List<String> rawLists = paymentMapper.getEzpAuthCdListByGid(gid);
+    List<String> rawLists = paymentMapper.간편결제수단목록가져오기(gid);
 
     // (2) Java 문자열 파싱 + HashSet으로 중복 제거
     Set<String> unique = new HashSet<>();
     for (String raw : rawLists) {
         // "01:02:03" → ["01","02","03"]
         String[] parts = raw.split(":");
-        for (String code : parts) {
-            if (!code.isBlank()) unique.add(code.trim());
-        }
+      ...생략...
     }
 
     // (3) 코드별 이름 조회 → N쿼리
     List<Map<String,String>> result = new ArrayList<>();
     for (String code : unique) {
-        String name = paymentMapper.getEzpNm(Map.of("EZP_CD", code));
-        result.add(Map.of("EZP_CD", code, "EZP_NM", name));
+      ...생략...
+        result.add(Map.of("코드", code, "이름", name));
     }
     return result;
 }
@@ -79,91 +78,53 @@ public List<Map<String,String>> getLegacyEzpAuthListByGid(String gid) {
 
 ## 💡 3. 문제 해결 
 
-### 핵심 SQL
+### 핵심 SQL 
+**🚨 보안 상 예시 쿼리로 대체합니다 🚨**
 
 ```xml
-<select id="getSetOfEzpCd" parameterType="map" resultType="map">
+<select id="getDistinctItemCodes" parameterType="map" resultType="map">
   SELECT DISTINCT
-    -- 1) REGEXP_SUBSTR로 n번째 조각을 추출 → EZP_CD
-    TRIM(REGEXP_SUBSTR(m.codes, '[^:]+', 1, lvl.COLUMN_VALUE)) AS EZP_CD,
-    -- 2) TBAD_CODE와 조인하여 인증사 이름(EZP_NM) 조회
-    c.desc1                                        AS EZP_NM
+    -- 1) REGEXP_SUBSTR로 n번째 토큰을 추출 → item_code
+    TRIM(REGEXP_SUBSTR(src.code_list, '[^:]+', 1, lvl.COLUMN_VALUE)) AS item_code,
+    -- 2) LOOKUP_TABLE과 조인하여 항목명(item_name) 조회
+    lk.item_name                                        AS item_name
   FROM (
-    SELECT EZP_AUTH_CD_LST AS codes
-    FROM TBSI_MBS
-    WHERE GID = #{GID}
-      AND EZP_AUTH_CD_LST IS NOT NULL
-  ) m
-  -- 3) 계층 쿼리+컬렉션으로 n=1..조각수까지 숫자 테이블 생성
+    -- 원본 문자열 컬럼 가져오기
+    SELECT code_list
+    FROM source_table
+    WHERE pk = #{pk}
+      AND code_list IS NOT NULL
+  ) src
+  -- 3) 계층 쿼리+컬렉션으로 1..토큰수까지 숫자 테이블 생성
   CROSS JOIN TABLE(
     CAST(
       MULTISET(
         SELECT LEVEL
         FROM DUAL
-        CONNECT BY LEVEL <= REGEXP_COUNT(m.codes, ':') + 1
+        CONNECT BY LEVEL <= REGEXP_COUNT(src.code_list, ':') + 1
       ) AS SYS.ODCINUMBERLIST
     )
   ) lvl
-  -- 4) 코드 매핑 테이블과 조인
-  JOIN TBAD_CODE c
-    ON c.col_nm = 'EZP_AUTH_CD'
-   AND c.code1  = '01'
-   AND c.code3  = TRIM(REGEXP_SUBSTR(m.codes, '[^:]+', 1, lvl.COLUMN_VALUE))
+  -- 4) lookup 테이블과 조인하여 이름 매핑
+  JOIN lookup_table lk
+    ON lk.category   = 'ITEM'
+   AND lk.item_code = TRIM(REGEXP_SUBSTR(src.code_list, '[^:]+', 1, lvl.COLUMN_VALUE))
   -- 5) 중복 제거 + 정렬
-  ORDER BY EZP_CD
+  ORDER BY item_code
 </select>
 ```
 
 #### 각 줄별 역할 & 원리
 
-| SQL 부분                                            | 역할 & 원리                                            |
-| :------------------------------------------------ | :------------------------------------------------- |
-| `REGEXP_COUNT(m.codes, ':')+1`                    | 문자열 내 `:` 개수 + 1 → 분리 조각 수 계산                      |
-| `CONNECT BY LEVEL <= N`                           | Oracle 계층형 쿼리로 1\~N 숫자(LEVEL) 생성 → 각 조각 인덱스 역할     |
-| `MULTISET(SELECT LEVEL...) AS SYS.ODCINUMBERLIST` | 숫자 결과를 Oracle 내장 컬렉션 타입으로 변환                       |
-| `TABLE(...) lvl`                                  | 컬렉션을 테이블처럼 풀어내 각 LEVEL 값을 행으로 확장                   |
-| `REGEXP_SUBSTR(..., lvl.COLUMN_VALUE)`            | LEVEL번째 조각(콜론 기준)을 추출 → Java `split` 대체            |
-| `SELECT DISTINCT`                                 | 임시 테이블 전체에서 중복된 `EZP_CD` 제거 → 합집합                  |
-| `JOIN TBAD_CODE c ... c.code3 = ...`              | 추출한 코드(`EZP_CD`)를 이름 테이블의 key와 매치 → `desc1` 바로 가져옴 |
-
-> **장점**
-> 이 6줄로 “문자열 분리 → 중복 제거 → 이름 매핑 → 정렬”을 **DB 한 번**에 처리할 수 있습니다.
-
----
-
-## 👨🏻‍⚖️ 4. 성능 검증: JUnit 테스트 예시 & 결과
-
-```java
-@Test
-public void compareLegacyAndOptimizedPerformance() {
-    // 서비스 준비
-    LegacyPaymentService legacySvc = new LegacyPaymentService(paymentMapper);
-    OptimizedPaymentService optSvc   = new OptimizedPaymentService(paymentMapper);
-
-    // (1) 워밍업
-    legacySvc.getLegacyEzpAuthListByGid(TEST_GID);
-    optSvc.getOptimizedEzpAuthListByGid(TEST_GID);
-
-    long legacyTotal = 0, optTotal = 0;
-    for (int i = 0; i < 10; i++) {
-        long s1 = System.nanoTime();
-        legacySvc.getLegacyEzpAuthListByGid(TEST_GID);
-        legacyTotal += System.nanoTime() - s1;
-
-        long s2 = System.nanoTime();
-        optSvc.getOptimizedEzpAuthListByGid(TEST_GID);
-        optTotal += System.nanoTime() - s2;
-    }
-
-    long legacyAvg = legacyTotal / 10;  // 예: 446.9 ms
-    long optAvg    = optTotal    / 10;  // 예: 366.5 ms
-
-    System.out.printf("Legacy Avg: %,d ns%n", legacyAvg);
-    System.out.printf("Optimized Avg: %,d ns%n", optAvg);
-
-    assertTrue(optAvg < legacyAvg, "한 방 SQL이 레거시보다 빨라야 합니다");
-}
-```
+| SQL 부분                                                             | 역할 & 원리                                                  |
+| :----------------------------------------------------------------- | :------------------------------------------------------- |
+| `REGEXP_COUNT(src.code_list, ':')+1`                               | 문자열 내 `:` 개수 + 1 → 분리할 토큰(LEVEL) 개수 계산                   |
+| `CONNECT BY LEVEL <= N`                                            | Oracle 계층형 쿼리로 1\~N 숫자(LEVEL) 생성 → 각 토큰의 인덱스 역할          |
+| `MULTISET(SELECT LEVEL...) AS SYS.ODCINUMBERLIST`                  | 숫자 결과를 Oracle 내장 컬렉션 타입으로 변환                             |
+| `TABLE(...) lvl`                                                   | 컬렉션을 테이블처럼 풀어내 각 LEVEL 값을 행으로 확장                         |
+| `TRIM(REGEXP_SUBSTR(src.code_list, '[^:]+', 1, lvl.COLUMN_VALUE))` | LEVEL번째 토큰(콜론 기준) 추출 → Java `split` 로직 대체                |
+| `SELECT DISTINCT`                                                  | 임시 테이블 전체에서 중복된 `item_code` 제거 → 합집합 생성                  |
+| `JOIN lookup_table lk ... lk.item_code = ...`                      | 추출한 `item_code`로 lookup\_table에서 `item_name`을 바로 매핑하여 조회 |
 
 * **Legacy**: 2회 쿼리 + Java 파싱 → `446.9 ms`
 * **Optimized**: 1회 쿼리 → `366.5 ms` (약 18% 개선)
