@@ -21,7 +21,9 @@ permalink: /tech/
 {:.related-posts.faded}
 
 ## Oracle
+* [Oracle 내장 함수로 문자열을 파싱하고 집합을 만들어보자]{:.heading.flip-title} --- REGEXP_SUBSTR & ODCINUMBERLIST을 활용한 조회 성능 개선
 {:.related-posts.faded}
 
 [자바의 다양한 문자열 null & 공백 체크 방식들]: java/null_check.md
 [정적 메서드에서 스프링 빈을 사용할 수 있을까?]: spring/postConstruct.md
+[Oracle 내장 함수로 문자열을 파싱하고 집합을 만들어보자]: oracle/REGEXP_SUBSTR.md
