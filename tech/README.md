@@ -18,6 +18,7 @@ permalink: /tech/
 
 ## Spring
 * [정적 메서드에서 스프링 빈을 사용할 수 있을까?]{:.heading.flip-title} --- @PostConstruct를 활용한 정적 필드 초기화
+* [컨트롤러의 공통 관심사 로직을 걷어내 보자 (1편)]{:.heading.flip-title} --- 서블릿 필터로 구현한 일관된 API 인증 시스템
 {:.related-posts.faded}
 
 ## Oracle
@@ -26,4 +27,5 @@ permalink: /tech/
 
 [자바의 다양한 문자열 null & 공백 체크 방식들]: java/null_check.md
 [정적 메서드에서 스프링 빈을 사용할 수 있을까?]: spring/postConstruct.md
+[컨트롤러의 공통 관심사 로직을 걷어내 보자 (1편)]: spring/servletFilter.md
 [Oracle 내장 함수로 문자열을 파싱하고 집합을 만들어보자]: oracle/REGEXP_SUBSTR.md
